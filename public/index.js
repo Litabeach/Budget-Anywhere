@@ -157,6 +157,13 @@ document.querySelector("#sub-btn").onclick = function() {
 //indexDB functions start here 
 const request = window.indexedDB.open("budgetDB", 1);
 
+request.onupgradeneeded = ({ target }) => {
+  const db = target.result;
+  const objectStore = db.createObjectStore("transactions");
+  objectStore.createIndex("deposits", "deposits");
+  objectStore.createIndex("expenses", "expenses");
+};
+
 request.onsuccess = event => {
   console.log(request.result.name);
 };
