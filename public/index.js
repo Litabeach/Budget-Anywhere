@@ -159,11 +159,35 @@ const request = window.indexedDB.open("budgetDB", 1);
 
 request.onupgradeneeded = ({ target }) => {
   const db = target.result;
-  const objectStore = db.createObjectStore("transactions");
+  const objectStore = db.createObjectStore("transactions", {keyPath: "transactionID"});
   objectStore.createIndex("deposits", "deposits");
   objectStore.createIndex("expenses", "expenses");
 };
 
 request.onsuccess = event => {
   console.log(request.result.name);
+  const db = request.result;
+  const transaction = db.transaction(["transactions"], "readwrite");
+  const transactionStore = transaction.objectStore("transactions");
+  const deposits = transactionStore.index("deposits");
+  const expenses = transactionStore.index("expenses");
 };
+
+  // Adds data to our objectStore
+  toDoListStore.add({deposits: "paycheck" });
+  toDoListStore.add({deposits: "bonus" });
+  toDoListStore.add({expenses: "rent" });
+  toDoListStore.add({expenses: "electric" });
+
+  // Return an item by keyPath
+  const getRequest = toDoListStore.get("1");
+  getRequest.onsuccess = () => {
+    console.log(getRequest.result);
+  };
+
+  // Return an item by index
+  const getRequestIdx = statusIndex.getAll("complete");
+  getRequestIdx.onsuccess = () => {
+    console.log(getRequestIdx.result); 
+  }; 
+
