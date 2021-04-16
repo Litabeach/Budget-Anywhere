@@ -152,80 +152,123 @@ document.querySelector("#sub-btn").onclick = function() {
   sendTransaction(false);
 };
 
+  // const request = window.indexedDB.open("budgetDB", 4);
 
+  // // Create schema
+  // request.onupgradeneeded = event => {
+  //   const db = event.target.result;
+    
+  //   // Creates an object store with a transactionID keypath that can be used to query on.
+  //   const budgetStore = db.createObjectStore("budget", keypath: transactionID );
+  //   // Creates a statusIndex that we can query on.
+  //   budgetStore.createIndex("expenses", "expenses"); 
+  //   budgetStore.createIndex("deposits", "deposits"); 
+  // }
 
-// //indexDB functions start here 
-// const request = window.indexedDB.open("budgetDB", 1);
+  // // Opens a transaction, accesses the budget objectStore and expenses.
+  // request.onsuccess = () => {
+  //   const db = request.result;
+  //   const transaction = db.transaction(["budget"], "readwrite");
+  //   const budgetStore = transaction.objectStore("budget");
+  //   const expenses = budgetStore.index("expenses");
+  //   const deposits = budgetStore.index("deposits");
 
-// request.onupgradeneeded = ({ target }) => {
-//   const db = target.result;
-//   const objectStore = db.createObjectStore("budgetDB", {keyPath: "transactionID"});
-//   objectStore.createIndex("deposits", "deposits");
-//   objectStore.createIndex("expenses", "expenses");
-// };
+  //   // Adds data to our objectStore
+  //   // budgetStore.add({  expenses: "rent"});
+  //   budgetStore.add({  transactionID: "3", expenses: "rent" });
+  //   budgetStore.add({  transactionID: "", deposits: "paycheck" });
+  //   // toDoListStore.add({ listID: "3", status: "complete" });
+  //   // toDoListStore.add({ listID: "4", status: "backlog" });
+   
+  // //   // Return an item by keyPath
+  // //   const getRequest = budgetStore.get(1);
+  // //   getRequest.onsuccess = () => {
+  // //     console.log(getRequest.result);
+  // //   };
 
-// request.onsuccess = event => {
-//   console.log(request.result.name);
-//   const db = request.result;
-//   const transaction = db.transaction(["transactions"], "readwrite");
-//   const transactionStore = transaction.objectStore("transactions");
-//   const deposits = transactionStore.index("deposits");
-//   const expenses = transactionStore.index("expenses");
-// };
-
-//   // Adds data to our objectStore
-//   transactionStore.add({deposits: "paycheck" });
-//   transactionStore.add({deposits: "bonus" });
-//   transactionStore.add({expenses: "rent" });
-//   transactionStore.add({expenses: "electric" });
-
-  // // Return an item by keyPath
-  // const getRequest = toDoListStore.get("1");
-  // getRequest.onsuccess = () => {
-  //   console.log(getRequest.result);
+  // //   // Return an item by index
+  // //   const getRequestIdx = expenses.getAll("rent");
+  // //   getRequestIdx.onsuccess = () => {
+  // //     console.log(getRequestIdx.result); 
+  // //   }; 
   // };
 
-  // // Return an item by index
-  // const getRequestIdx = statusIndex.getAll("complete");
-  // getRequestIdx.onsuccess = () => {
-  //   console.log(getRequestIdx.result); 
-  // }; 
 
-  const request = window.indexedDB.open("budgetDB", 2);
+let db;
 
-  // Create schema
-  request.onupgradeneeded = event => {
-    const db = event.target.result;
-    
-    // Creates an object store with a transactionID keypath that can be used to query on.
-    const budgetStore = db.createObjectStore("budget", {keyPath: "transactionID"});
-    // Creates a statusIndex that we can query on.
-    budgetStore.createIndex("expenses", "expenses"); 
-    // budgetStore.createIndex("deposits", "deposits"); 
+const request = indexedDB.open("budgetDB", 1);
+
+request.onupgradeneeded = function(event) {
+  const db = event.target.result;
+  db.createObjectStore("expenses", { autoIncrement: true });
+};
+
+request.onsuccess = function(event) {
+  db = event.target.result;
+
+  // check if app is online before reading from db
+  if (navigator.onLine) {
+    checkDatabase();
   }
+};
 
-  // Opens a transaction, accesses the budget objectStore and expenses.
-  request.onsuccess = () => {
-    const db = request.result;
-    const transaction = db.transaction(["budget"], "readwrite");
-    const budgetStore = transaction.objectStore("budget");
-    const expenses = budgetStore.index("expenses");
+request.onerror = function(event) {
+  console.log("Error " + event.target.errorCode);
+};
 
-    // Adds data to our objectStore
-    // budgetStore.add({  expenses: "rent"});
-    // budgetStore.add({ listID: "2", expenses: "in-progress" });
-    // toDoListStore.add({ listID: "3", status: "complete" });
-    // toDoListStore.add({ listID: "4", status: "backlog" });
-   
-  //   // Return an item by keyPath
-  //   const getRequest = budgetStore.get(1);
-  //   getRequest.onsuccess = () => {
-  //     console.log(getRequest.result);
-  //   };
+function saveRecord(record) {
+  const transaction = db.transaction(["expenses"], "readwrite");
+  const store = transaction.objectStore("expenses");
 
-  //   // Return an item by index
-  //   const getRequestIdx = expenses.getAll("rent");
-  //   getRequestIdx.onsuccess = () => {
-  //     console.log(getRequestIdx.result); 
-  //   }; 
+  store.add(record);
+
+  // clear form
+  // $("#nameEl").val("");
+  // $("#amountEl").val("");
+  // $("#guests").val(0);
+}
+
+function isOffline(){
+  $("#onlineStatus").attr("src", "images/offline_button.png");
+}
+
+function checkDatabase() {
+  $("#onlineStatus").attr("src", "images/online_button.png");
+  
+  const transaction = db.transaction(["expenses"], "readwrite");
+  const store = transaction.objectStore("expenses");
+  const getAll = store.getAll();
+
+  getAll.onsuccess = function() {
+    //if there are any documents waiting to be online, bulk push
+    if (getAll.result.length > 0) {
+    
+      $.ajax({
+        type: "POST",
+        url: "/api/expenses/bulk",
+        data: JSON.stringify(getAll.result),
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json"
+        },
+        success: function(msg){
+            const transaction = db.transaction(["expenses"], "readwrite");
+            const store = transaction.objectStore("expenses");
+            store.clear();
+            populateTable();
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          console.log(getAll.result);
+          console.log("Failed to Save DB");
+          console.log(XMLHttpRequest, textStatus, errorThrown)
+        }
+      });
+    }
   };
+}
+
+// listen for app coming back online
+window.addEventListener("online", checkDatabase);
+
+//Trigger some css when offline
+window.addEventListener("offline", isOffline, false);
