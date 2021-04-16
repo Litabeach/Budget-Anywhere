@@ -154,40 +154,78 @@ document.querySelector("#sub-btn").onclick = function() {
 
 
 
-//indexDB functions start here 
-const request = window.indexedDB.open("budgetDB", 1);
+// //indexDB functions start here 
+// const request = window.indexedDB.open("budgetDB", 1);
 
-request.onupgradeneeded = ({ target }) => {
-  const db = target.result;
-  const objectStore = db.createObjectStore("transactions", {keyPath: "transactionID"});
-  objectStore.createIndex("deposits", "deposits");
-  objectStore.createIndex("expenses", "expenses");
-};
+// request.onupgradeneeded = ({ target }) => {
+//   const db = target.result;
+//   const objectStore = db.createObjectStore("budgetDB", {keyPath: "transactionID"});
+//   objectStore.createIndex("deposits", "deposits");
+//   objectStore.createIndex("expenses", "expenses");
+// };
 
-request.onsuccess = event => {
-  console.log(request.result.name);
-  const db = request.result;
-  const transaction = db.transaction(["transactions"], "readwrite");
-  const transactionStore = transaction.objectStore("transactions");
-  const deposits = transactionStore.index("deposits");
-  const expenses = transactionStore.index("expenses");
-};
+// request.onsuccess = event => {
+//   console.log(request.result.name);
+//   const db = request.result;
+//   const transaction = db.transaction(["transactions"], "readwrite");
+//   const transactionStore = transaction.objectStore("transactions");
+//   const deposits = transactionStore.index("deposits");
+//   const expenses = transactionStore.index("expenses");
+// };
 
-  // Adds data to our objectStore
-  toDoListStore.add({deposits: "paycheck" });
-  toDoListStore.add({deposits: "bonus" });
-  toDoListStore.add({expenses: "rent" });
-  toDoListStore.add({expenses: "electric" });
+//   // Adds data to our objectStore
+//   transactionStore.add({deposits: "paycheck" });
+//   transactionStore.add({deposits: "bonus" });
+//   transactionStore.add({expenses: "rent" });
+//   transactionStore.add({expenses: "electric" });
 
-  // Return an item by keyPath
-  const getRequest = toDoListStore.get("1");
-  getRequest.onsuccess = () => {
-    console.log(getRequest.result);
+  // // Return an item by keyPath
+  // const getRequest = toDoListStore.get("1");
+  // getRequest.onsuccess = () => {
+  //   console.log(getRequest.result);
+  // };
+
+  // // Return an item by index
+  // const getRequestIdx = statusIndex.getAll("complete");
+  // getRequestIdx.onsuccess = () => {
+  //   console.log(getRequestIdx.result); 
+  // }; 
+
+  const request = window.indexedDB.open("budgetDB", 2);
+
+  // Create schema
+  request.onupgradeneeded = event => {
+    const db = event.target.result;
+    
+    // Creates an object store with a transactionID keypath that can be used to query on.
+    const budgetStore = db.createObjectStore("budget", {keyPath: "transactionID"});
+    // Creates a statusIndex that we can query on.
+    budgetStore.createIndex("expenses", "expenses"); 
+    // budgetStore.createIndex("deposits", "deposits"); 
+  }
+
+  // Opens a transaction, accesses the budget objectStore and expenses.
+  request.onsuccess = () => {
+    const db = request.result;
+    const transaction = db.transaction(["budget"], "readwrite");
+    const budgetStore = transaction.objectStore("budget");
+    const expenses = budgetStore.index("expenses");
+
+    // Adds data to our objectStore
+    // budgetStore.add({  expenses: "rent"});
+    // budgetStore.add({ listID: "2", expenses: "in-progress" });
+    // toDoListStore.add({ listID: "3", status: "complete" });
+    // toDoListStore.add({ listID: "4", status: "backlog" });
+   
+  //   // Return an item by keyPath
+  //   const getRequest = budgetStore.get(1);
+  //   getRequest.onsuccess = () => {
+  //     console.log(getRequest.result);
+  //   };
+
+  //   // Return an item by index
+  //   const getRequestIdx = expenses.getAll("rent");
+  //   getRequestIdx.onsuccess = () => {
+  //     console.log(getRequestIdx.result); 
+  //   }; 
   };
-
-  // Return an item by index
-  const getRequestIdx = statusIndex.getAll("complete");
-  getRequestIdx.onsuccess = () => {
-    console.log(getRequestIdx.result); 
-  }; 
-
