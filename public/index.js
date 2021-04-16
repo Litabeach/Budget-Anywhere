@@ -151,3 +151,12 @@ document.querySelector("#add-btn").onclick = function() {
 document.querySelector("#sub-btn").onclick = function() {
   sendTransaction(false);
 };
+
+
+
+//indexDB functions start here 
+const request = window.indexedDB.open("budgetDB", 1);
+
+request.onsuccess = event => {
+  console.log(request.result.name);
+};
