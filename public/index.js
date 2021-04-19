@@ -152,3 +152,82 @@ document.querySelector("#sub-btn").onclick = function() {
   sendTransaction(false);
 };
 
+
+let db;
+
+const request = indexedDB.open("budget", 1);
+
+request.onupgradeneeded = function(event) {
+  const db = event.target.result;
+  db.createObjectStore("transaction", { autoIncrement: true });
+};
+
+request.onsuccess = function(event) {
+  db = event.target.result;
+
+  // check if app is online before reading from db
+  if (navigator.onLine) {
+    checkDatabase();
+  }
+};
+
+request.onerror = function(event) {
+  console.log("Error " + event.target.errorCode);
+};
+
+function saveRecord(record) {
+  const transaction = db.transaction(["transaction"], "readwrite");
+  const store = transaction.objectStore("transaction");
+
+  store.add(record);
+
+  // clear form
+  $("#nameEl").val("");
+  $("#amountEl").val("");
+  // $("#guests").val(0);
+}
+
+function isOffline(){
+  $("#onlineStatus").attr("src", "images/offline_button.png");
+}
+
+function checkDatabase() {
+  $("#onlineStatus").attr("src", "images/online_button.png");
+  
+  const transaction = db.transaction(["transaction"], "readwrite");
+  const store = transaction.objectStore("transaction");
+  const getAll = store.getAll();
+
+  getAll.onsuccess = function() {
+    //if there are any documents waiting to be online, bulk push
+    if (getAll.result.length > 0) {
+    
+      $.ajax({
+        type: "POST",
+        url: "/api/transaction/bulk",
+        data: JSON.stringify(getAll.result),
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json"
+        },
+        success: function(msg){
+            const transaction = db.transaction(["transaction"], "readwrite");
+            const store = transaction.objectStore("transaction");
+            store.clear();
+            populateTable();
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          console.log(getAll.result);
+          console.log("Failed to Save DB");
+          console.log(XMLHttpRequest, textStatus, errorThrown)
+        }
+      });
+    }
+  };
+}
+
+// listen for app coming back online
+window.addEventListener("online", checkDatabase);
+
+//Trigger some css when offline
+window.addEventListener("offline", isOffline, false);
