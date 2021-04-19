@@ -3,7 +3,7 @@
 ## Description 
 
 An app to add expenses and deposits to a budget with or without an internet connection. 
-Built with IndexDB, Mongoose, Mongo. Javascript, Express, and Node.js.<br>
+Built with IndexDB, Mongoose, Mongo, MongoDB Atlas, Javascript, Express, and Node.js.<br>
 Check out the app on Heroku: https://budget-anywhere.herokuapp.com/
 
 
