@@ -47,3 +47,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ![Built with MongoDB badge](https://img.shields.io/badge/Built_with-MongoDB-green) 
 ![Built with Express badge](https://img.shields.io/badge/Built_with-Express-yellow) 
 
+
+
+mongodb+srv://litabeach:951236Aa@cluster0.6cm7l.mongodb.net/budget?retryWrites=true&w=majority
