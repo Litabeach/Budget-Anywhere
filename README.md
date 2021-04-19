@@ -11,7 +11,6 @@ Check out the app on Heroku: https://budget-anywhere.herokuapp.com/
 
 * [Installation](#installation)
 * [Usage](#usage)
-* [Credits](#credits)
 * [License](#license)
 * [Badges](#badges)
 
@@ -22,11 +21,11 @@ Run 'npm i', then 'node server.js' from the command line to run the server. This
 
 ## Usage 
 
-Visit the homepage to view most recent workout, create a new workout, or add to the latest workout. 
+Visit the page to add expenses and deposits to your budget. Users are able to enter transactions offline. The transactions entered offline will automatically be populated to the database when the user regains internet connection.
 
-![screenshot of homepage](public/images/homepage.png)
-![screenshot of dashboard](public/images/stats.png)
-![screenshot of create new workout](public/images/create.png)
+![screenshot of homepage](public/images/budget.png)
+<!-- ![screenshot of dashboard](public/images/stats.png)
+![screenshot of create new workout](public/images/create.png) -->
 
 
 ## License
@@ -46,6 +45,3 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ![Built with MongoDB badge](https://img.shields.io/badge/Built_with-MongoDB-green) 
 ![Built with Express badge](https://img.shields.io/badge/Built_with-Express-yellow) 
 
-
-
-mongodb+srv://litabeach:951236Aa@cluster0.6cm7l.mongodb.net/budget?retryWrites=true&w=majority
