@@ -1,10 +1,10 @@
-#Budget-Anywhere
+# Budget-Anywhere
 
 ## Description 
 
 An app to add expenses and deposits to their budget with or without a connection. Users are able to enter transactions offline, when they go back online the mongo database will populate.
 Built with IndexDB, Javascript, Express, and Mongo.<br>
-Check out the app on Heroku: https://shielded-dusk-73422.herokuapp.com/
+Check out the app on Heroku: https://budget-anywhere.herokuapp.com/
 
 
 ## Table of Contents
@@ -18,8 +18,7 @@ Check out the app on Heroku: https://shielded-dusk-73422.herokuapp.com/
 
 ## Installation
 
-Run 'npm i', then 'node server.js' from the command line to run the server. This app can be used without installation by visiting the Heroku site where it is deployed. https://shielded-dusk-73422.herokuapp.com/
-
+Run 'npm i', then 'node server.js' from the command line to run the server. This app can be used without installation by visiting the Heroku site where it is deployed. https://budget-anywhere.herokuapp.com/
 
 ## Usage 
 
