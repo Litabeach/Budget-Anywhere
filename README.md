@@ -24,8 +24,6 @@ Run 'npm i', then 'node server.js' from the command line to run the server. This
 Visit the page to add expenses and deposits to your budget. Users are able to enter transactions offline. The transactions entered offline will automatically be populated to the database when the user regains internet connection.
 
 ![screenshot of homepage](public/images/budget.png)
-<!-- ![screenshot of dashboard](public/images/stats.png)
-![screenshot of create new workout](public/images/create.png) -->
 
 
 ## License
